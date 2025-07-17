@@ -20,13 +20,17 @@ defmodule ThunesServiceWeb.Router do
   scope "/", ThunesServiceWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", DashboardLive, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ThunesServiceWeb do
-  #   pipe_through :api
-  # end
+  # Internal API endpoints for money transfer operations
+  scope "/api", ThunesServiceWeb do
+    pipe_through :api
+
+    post "/transfers", TransferController, :create
+    get "/transfers/:id", TransferController, :show
+    get "/quote", TransferController, :quote
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:thunes_service, :dev_routes) do
