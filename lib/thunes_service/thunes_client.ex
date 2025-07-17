@@ -161,8 +161,7 @@ defmodule ThunesService.ThunesClient do
         inserted_at: DateTime.utc_now()
       }
 
-      # We'll create the ApiLog schema next
-      # ApiLog.create(attrs)
+      ThunesService.ApiLogs.create_api_log(attrs)
 
       Logger.info("Thunes API Request",
         method: attrs.method,
@@ -171,6 +170,7 @@ defmodule ThunesService.ThunesClient do
         duration: "#{attrs.duration_ms}ms"
       )
     end)
+  end
   end
 
   defp log_api_error(method, url, headers, body, error, duration) do
@@ -185,8 +185,11 @@ defmodule ThunesService.ThunesClient do
         response_body: %{"error" => inspect(error)},
         duration_ms: System.convert_time_unit(duration, :native, :millisecond),
         success: false,
+        error_type: inspect(error),
         inserted_at: DateTime.utc_now()
       }
+
+      ThunesService.ApiLogs.create_api_log(attrs)
 
       Logger.error("Thunes API Error",
         method: attrs.method,
@@ -195,6 +198,7 @@ defmodule ThunesService.ThunesClient do
         duration: "#{attrs.duration_ms}ms"
       )
     end)
+  end
   end
 
   defp get_config(key) do
