@@ -12,6 +12,7 @@ defmodule ThunesServiceWeb.DashboardLive do
     socket =
       socket
       |> assign(:page_title, "Money Transfer Dashboard")
+      |> assign(:current_scope, socket.assigns[:current_scope])
       |> assign(:stats, get_dashboard_stats())
       |> assign(:recent_transactions, get_recent_transactions())
       |> assign(:api_status, get_api_status())
