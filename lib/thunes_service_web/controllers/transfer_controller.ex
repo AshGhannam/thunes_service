@@ -25,7 +25,7 @@ defmodule ThunesServiceWeb.TransferController do
     client = ThunesClient.new()
 
     case ThunesClient.create_transfer(client, transfer_params) do
-      {:ok, _response} ->
+      {:ok, response} ->
         # TODO: Store transaction in database
         conn
         |> put_status(:created)
@@ -94,7 +94,7 @@ defmodule ThunesServiceWeb.TransferController do
     client = ThunesClient.new()
 
     case ThunesClient.get_quote(client, quote_params) do
-      {:ok, _response} ->
+      {:ok, response} ->
         conn
         |> put_status(:ok)
         |> json(%{
