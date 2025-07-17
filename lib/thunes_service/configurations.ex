@@ -32,9 +32,9 @@ defmodule ThunesService.Configurations do
   def create_thunes_configuration(attrs \\ %{}) do
     %ThunesConfiguration{}
     |> ThunesConfiguration.changeset(attrs)
-    |> maybe_deactivate_others()
+    |> Repo.insert()
     |> Repo.transaction(fn repo ->
-      case repo.insert(changeset) do
+      case changeset do
         {:ok, config} ->
           if config.is_active do
             deactivate_all_except(config.id)
@@ -43,7 +43,7 @@ defmodule ThunesService.Configurations do
           config
 
         {:error, changeset} ->
-          repo.rollback(changeset)
+          Repo.rollback(changeset)
       end
     end)
     |> case do
@@ -59,7 +59,7 @@ defmodule ThunesService.Configurations do
     changeset = ThunesConfiguration.changeset(thunes_configuration, attrs)
 
     Repo.transaction(fn repo ->
-      case repo.update(changeset) do
+      case changeset do
         {:ok, config} ->
           if config.is_active do
             deactivate_all_except(config.id)
@@ -68,7 +68,7 @@ defmodule ThunesService.Configurations do
           config
 
         {:error, changeset} ->
-          repo.rollback(changeset)
+          Repo.rollback(changeset)
       end
     end)
     |> case do
