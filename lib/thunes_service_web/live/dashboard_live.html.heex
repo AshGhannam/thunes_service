@@ -68,7 +68,7 @@
             </div>
             <div>
               <p class="text-slate-300 text-sm">Total Transfers</p>
-              <p class="text-white text-2xl font-bold">${@stats.total_amount}</p>
+              <p class="text-white text-2xl font-bold">{@stats.total_amount}</p>
             </div>
           </div>
         </div>
@@ -236,8 +236,6 @@
               >
                 View Configuration
               </.link>
-                View Configuration
-              </button>
               <button
                 class="w-full bg-green-500/20 hover:bg-green-500/30 text-green-300 px-4 py-3 rounded-lg border border-green-400/30 text-left transition-colors"
                 phx-click="refresh_stats"
