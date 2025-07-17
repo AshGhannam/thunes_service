@@ -7,8 +7,6 @@ defmodule ThunesService.ThunesClient do
   require Logger
 
   @base_url "https://api.thunes.com"
-
-  @base_url "https://api.thunes.com"
   @sandbox_url "https://api-sandbox.thunes.com"
   @timeout 30_000
 
@@ -171,7 +169,6 @@ defmodule ThunesService.ThunesClient do
       )
     end)
   end
-  end
 
   defp log_api_error(method, url, headers, body, error, duration) do
     Task.start(fn ->
@@ -198,7 +195,6 @@ defmodule ThunesService.ThunesClient do
         duration: "#{attrs.duration_ms}ms"
       )
     end)
-  end
   end
 
   defp get_config(key) do
