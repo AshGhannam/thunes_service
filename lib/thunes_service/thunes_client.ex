@@ -5,8 +5,8 @@ defmodule ThunesService.ThunesClient do
   """
 
   require Logger
-  alias ThunesService.Repo
-  alias ThunesService.ApiLog
+
+  @base_url "https://api.thunes.com"
 
   @base_url "https://api.thunes.com"
   @sandbox_url "https://api-sandbox.thunes.com"
