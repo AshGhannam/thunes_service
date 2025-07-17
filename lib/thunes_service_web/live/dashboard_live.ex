@@ -21,7 +21,7 @@ defmodule ThunesServiceWeb.DashboardLive do
   end
 
   @impl true
-  def handle_info({:transaction_updated, transaction}, socket) do
+  def handle_info({:transaction_updated, _transaction}, socket) do
     # Update recent transactions when new ones come in
     {:noreply,
      socket
