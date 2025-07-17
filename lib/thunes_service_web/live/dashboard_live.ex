@@ -1,6 +1,8 @@
 defmodule ThunesServiceWeb.DashboardLive do
   use ThunesServiceWeb, :live_view
 
+  alias ThunesService.Transactions
+
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
@@ -18,6 +20,15 @@ defmodule ThunesServiceWeb.DashboardLive do
       |> assign(:api_status, get_api_status())
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_info({:transaction_created, _transaction}, socket) do
+    # Update recent transactions when new ones come in
+    {:noreply,
+     socket
+     |> assign(:recent_transactions, get_recent_transactions())
+     |> assign(:stats, get_dashboard_stats())}
   end
 
   @impl true
@@ -45,37 +56,27 @@ defmodule ThunesServiceWeb.DashboardLive do
   end
 
   defp get_dashboard_stats do
-    # Mock data for now - we'll implement real queries later
+    stats = Transactions.get_transaction_stats()
+
     %{
-      total_amount: "24,589",
-      successful_count: 156,
-      pending_count: 8,
-      failed_count: 3
+      total_amount: format_amount(stats.total_amount),
+      successful_count: stats.successful_count,
+      pending_count: stats.pending_count,
+      failed_count: stats.failed_count
     }
   end
 
   defp get_recent_transactions do
-    # Mock data for now - we'll implement real queries later
-    [
+    Transactions.list_transactions()
+    |> Enum.take(10)
+    |> Enum.map(fn transaction ->
       %{
-        id: "TXN-001",
-        amount: "$1,250.00",
-        status: "completed",
-        inserted_at: "2 min ago"
-      },
-      %{
-        id: "TXN-002",
-        amount: "$850.50",
-        status: "pending",
-        inserted_at: "5 min ago"
-      },
-      %{
-        id: "TXN-003",
-        amount: "$2,100.00",
-        status: "completed",
-        inserted_at: "12 min ago"
+        id: transaction.external_id,
+        amount: format_currency(transaction.amount, transaction.currency),
+        status: transaction.status,
+        inserted_at: format_time_ago(transaction.inserted_at)
       }
-    ]
+    end)
   end
 
   defp get_api_status do
@@ -85,6 +86,30 @@ defmodule ThunesServiceWeb.DashboardLive do
       response_time: "245ms",
       last_check: "30s ago"
     }
+  end
+
+  defp format_amount(nil), do: "$0"
+
+  defp format_amount(amount) when is_struct(amount, Decimal) do
+    "$#{Decimal.to_string(amount, :normal)}"
+  end
+
+  defp format_amount(amount), do: "$#{amount}"
+
+  defp format_currency(amount, currency) do
+    "#{currency} #{Decimal.to_string(amount, :normal)}"
+  end
+
+  defp format_time_ago(datetime) do
+    now = DateTime.utc_now()
+    diff = DateTime.diff(now, datetime, :second)
+
+    cond do
+      diff < 60 -> "#{diff}s ago"
+      diff < 3600 -> "#{div(diff, 60)}m ago"
+      diff < 86400 -> "#{div(diff, 3600)}h ago"
+      true -> "#{div(diff, 86400)}d ago"
+    end
   end
 
   defp status_badge_class("completed"), do: "bg-green-500/20 text-green-300 border-green-400/30"
