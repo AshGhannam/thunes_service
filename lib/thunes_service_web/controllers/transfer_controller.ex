@@ -115,11 +115,14 @@ defmodule ThunesServiceWeb.TransferController do
             {:ok, response} ->
               # Update local transaction status
               updated_status = map_thunes_status(response["status"])
-              
-              Transactions.update_transaction(transaction, %{
-                status: updated_status,
-                .merge(transaction.metadata || %{}, response)
-              })
+
+              Transactions.update_transaction(
+                transaction,
+                Map.merge(transaction.metadata || %{}, %{
+                  status: updated_status,
+                  metadata: response
+                })
+              )
 
               conn
               |> put_status(:ok)
@@ -191,11 +194,11 @@ defmodule ThunesServiceWeb.TransferController do
     client = ThunesClient.new()
 
     case ThunesClient.get_quote(client, quote_params) do
-      {:ok, response} ->
+      {:ok, _response} ->
         conn
         |> put_status(:ok)
         |> json(%{
-          status: "success",
+          status: "success"
         })
 
       {:error, reason} ->
@@ -229,4 +232,3 @@ defmodule ThunesServiceWeb.TransferController do
     end)
   end
 end
-
