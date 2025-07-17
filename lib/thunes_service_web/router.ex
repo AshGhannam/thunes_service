@@ -22,6 +22,7 @@ defmodule ThunesServiceWeb.Router do
 
     live "/", DashboardLive, :index
     live "/config", ConfigLive, :index
+    live "/api-logs", ApiLogsLive, :index
   end
 
   # Internal API endpoints for money transfer operations
