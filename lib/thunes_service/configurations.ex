@@ -30,11 +30,10 @@ defmodule ThunesService.Configurations do
   Creates a thunes_configuration.
   """
   def create_thunes_configuration(attrs \\ %{}) do
-    %ThunesConfiguration{}
-    |> ThunesConfiguration.changeset(attrs)
-    |> Repo.insert()
-    |> Repo.transaction(fn repo ->
-      case changeset do
+    changeset = ThunesConfiguration.changeset(%ThunesConfiguration{}, attrs)
+
+    Repo.transaction(fn ->
+      case Repo.insert(changeset) do
         {:ok, config} ->
           if config.is_active do
             deactivate_all_except(config.id)
@@ -58,8 +57,8 @@ defmodule ThunesService.Configurations do
   def update_thunes_configuration(%ThunesConfiguration{} = thunes_configuration, attrs) do
     changeset = ThunesConfiguration.changeset(thunes_configuration, attrs)
 
-    Repo.transaction(fn repo ->
-      case changeset do
+    Repo.transaction(fn ->
+      case Repo.update(changeset) do
         {:ok, config} ->
           if config.is_active do
             deactivate_all_except(config.id)
@@ -102,13 +101,5 @@ defmodule ThunesService.Configurations do
   defp deactivate_all_except(id) do
     from(c in ThunesConfiguration, where: c.id != ^id)
     |> Repo.update_all(set: [is_active: false])
-  end
-
-  defp maybe_deactivate_others(changeset) do
-    if Ecto.Changeset.get_change(changeset, :is_active) == true do
-      deactivate_all_except(nil)
-    end
-
-    changeset
   end
 end
