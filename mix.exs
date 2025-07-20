@@ -1,6 +1,3 @@
-==> bcrypt_elixir
-mkdir -p "/workspace/thunes_service/_build/dev/lib/bcrypt_elixir/priv"
-cc -g -O3 -Wall -Wno-format-truncation -I"/root/.asdf/installs/erlang/27.3.3/erts-15.2.6/include" -Ic_src -fPIC -shared  c_src/bcrypt_nif.c c_src/blowfish.c -o "/workspace/thunes_service/_build/dev/lib/bcrypt_elixir/priv/bcrypt_nif.so"
 defmodule ThunesService.MixProject do
   use Mix.Project
 
@@ -41,7 +38,7 @@ defmodule ThunesService.MixProject do
       {:phoenix, "~> 1.8.0-rc.4", override: true},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
-      {:ecto_sqlite3, ">= 0.0.0"},
+      {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.1.0-rc.0"},
